@@ -1,0 +1,37 @@
+{
+  "name": "vtex.us-address-validation-checkout",
+  "version": "0.1.0",
+  "dependencies": {
+    "@vtex/api": "6.45.6",
+    "atob": "^2.1.2",
+    "co-body": "^6.0.0",
+    "graphql": "^14.5.0",
+    "graphql-tools": "^4.0.6",
+    "jsonwebtoken": "^8.5.0",
+    "qs": "^6.9.4",
+    "ramda": "^0.25.0"
+  },
+  "devDependencies": {
+    "@types/atob": "^2.1.2",
+    "@types/bluebird": "^3.5.25",
+    "@types/co-body": "0.0.3",
+    "@types/graphql": "^14.5.0",
+    "@types/jest": "^27.0.2",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/node": "^12.0.0",
+    "@types/ramda": "types/npm-ramda#dist",
+    "@vtex/api": "6.45.6",
+    "@vtex/prettier-config": "^0.3.1",
+    "@vtex/tsconfig": "^0.6.0",
+    "tslint": "^5.12.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-config-vtex": "^2.1.0",
+    "typescript": "3.9.7",
+    "vtex.checkout": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout@0.6.0/public/_types/react",
+    "vtex.graphql-server": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.graphql-server@1.66.12/public/_types/react",
+    "vtex.order-manager": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-manager@0.11.1/public/@types/vtex.order-manager"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit && tslint -c tslint.json './**/*.ts'"
+  }
+}

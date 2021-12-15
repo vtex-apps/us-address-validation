@@ -1,0 +1,113 @@
+.addressValidation__modal,
+.addressValidation__modal--bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+}
+
+.addressValidation__modal--bg {
+  background: #000;
+  opacity: 0.4;
+}
+
+.addressValidation__modal--wrap {
+  width: 400px;
+  background: #fff;
+  position: fixed;
+  left: calc(50% - 200px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99999;
+  padding: 30px;
+  border-radius: 3px;
+  box-sizing: border-box;
+
+  color: #333333;
+  background: #fff;
+  box-shadow: 0 5px 0 #ddd;
+  border-bottom: 1px solid #fff;
+  border-radius: 4px;
+  border: 2px solid #eee;
+}
+
+button.addressValidation__modal--button {
+  background: #1a73e8;
+  padding: 10px;
+  display: inline-block;
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+}
+.addressValidation__modal--button.js-loading {
+	opacity: 0.8;
+}
+.addressValidation__modal--button.js-loading:after {
+  border: 3px solid #f3f3f3; 
+  border-top: 3px solid #1a73e8; 
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  animation: spin 1s linear infinite;
+  content: "";
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+h4.addressValidation__modal--title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+}
+
+.addressValidation__modal--addresses {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin: 10px 0px;
+}
+
+.addressValidation__modal--addressOption {
+  display: block;
+  width: calc(50% - 10px);
+  padding: 20px;
+  transition: all ease 0.3s;
+}
+
+.addressValidation__modal--addressOption p {
+  font-weight: bold;
+}
+
+.addressValidation__modal--addressOption.ischecked {
+  background: #eee;
+}
+
+p.addressValidation__modal--text {
+  margin-bottom: 0;
+}
+
+button.addressValidation__modal--close {
+  position: absolute;
+  top: -1px;
+  right: -2px;
+  background: #1a73e8;
+  border: none;
+  font-size: 20px;
+  color: #fff;
+  padding: 10px;
+  line-height: 12px;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

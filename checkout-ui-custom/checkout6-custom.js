@@ -45,6 +45,7 @@ class _addressValidation {
 			_this.saveAddress();
 		});
 
+
 	}
 
 	closeModal() {
@@ -82,7 +83,7 @@ class _addressValidation {
 							<span>
 								${_this.validatedAddress.components.primary_number} ${_this.validatedAddress.components.street_name} ${_this.validatedAddress.components.street_suffix}
 								<br/>
-								${_this.validatedAddress.components.city_name}, ${_this.validatedAddress.components.state_abbreviation} ${_this.validatedAddress.components.zipcode}
+								${_this.validatedAddress.components.default_city_name}, ${_this.validatedAddress.components.state_abbreviation} ${_this.validatedAddress.components.zipcode}
 							</span>
 						</label>
 					</form>
@@ -155,15 +156,17 @@ class _addressValidation {
       });
 	}
 
-	validate() {
+	validate(orderForm) {
 		const _this = this;
+
+		_this.orderForm = orderForm;
 
 		try {
 			if( 
 				_this.orderForm && 
 				_this.orderForm.shippingData && 
 				_this.orderForm.shippingData.selectedAddresses.length &&
-			//	_this.orderForm.shippingData.selectedAddresses[0].isDisposable
+				_this.orderForm.shippingData.selectedAddresses[0].isDisposable &&
 				!_this._addressValidationStatus &&
 				(_this._addressValidationId != _this.orderForm.shippingData.selectedAddresses[0].addressId)
 				
@@ -183,7 +186,7 @@ class _addressValidation {
           _this.validatedAddress = JSON.parse(result)[0];
 
           if(
-            _this.validatedAddress.components.city_name == _this.checkoutAddress.city &&
+            _this.validatedAddress.components.default_city_name == _this.checkoutAddress.city &&
             _this.validatedAddress.components.zipcode == _this.checkoutAddress.postalCode &&
             _this.validatedAddress.components.state_abbreviation == _this.checkoutAddress.state &&
             _this.validatedAddress.delivery_line_1 == _this.checkoutAddress.street
@@ -203,18 +206,26 @@ class _addressValidation {
 		} 
 	}
 
+	compareSelectAddresses(oldOrderForm, orderFormUpdated) {
+		const _this = this;
+		if(oldOrderForm.shippingData.selectedAddresses[0] != orderFormUpdated.shippingData.selectedAddresses[0]) _this._addressValidationStatus = false;
+	}
+
 	init() {
 		const _this = this;
 
 
 		$(window).on('orderFormUpdated.vtex', function(evt, orderForm) {
+
+      if(_this.orderForm) _this.compareSelectAddresses(_this.orderForm, orderForm);
+
 			_this.orderForm = orderForm;
 			_this.lang = vtex ? vtex.i18n.locale : "en";
       _this.bind();
 
 			if(window.location.hash=="#/shipping" || window.location.hash=="#/payment") {
 				debounce(function() {
-					_this.validate();
+					_this.validate(orderForm);
 				}, 250)();
 			}
 		});

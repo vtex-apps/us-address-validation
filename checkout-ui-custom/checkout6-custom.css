@@ -91,7 +91,7 @@ p.addressValidation__modal--text {
 
 button.addressValidation__modal--close {
   position: absolute;
-  top: -1px;
+  top: -2px;
   right: -2px;
   background: #1a73e8;
   border: none;
@@ -101,6 +101,25 @@ button.addressValidation__modal--close {
   line-height: 12px;
   box-sizing: border-box;
   margin: 0;
+}
+
+
+.addressValidation__modal.addressValidation__modal--error .addressValidation__modal--text {
+    margin-bottom:12px;
+}
+
+.addressValidation__modal.addressValidation__modal--error h4.addressValidation__modal--title:before {
+    content:"x";
+    width:30px;
+    height:30px;
+    display:inline-block;
+    background: #ff4e4e;
+    text-align:center;
+    line-height:30px;
+    color:#FFF;
+    margin-right:10px;
+    border-radius:100%;
+    font-weight: normal;
 }
 
 @keyframes spin {

@@ -33,7 +33,7 @@ class _addressValidation {
 			$(this).addClass("ischecked");
 		});
 
-		$("body").on("click", ".addressValidation__modal--close", function(e) {
+		$("body").on("click", ".js-addressValidation__modal--close", function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 			_this.closeModal();
@@ -57,6 +57,25 @@ class _addressValidation {
 		})
 	}
 
+	showInvalidAddressModal() {
+		const _this = this;
+
+		const _modalHTML = `
+			<div class="addressValidation__modal addressValidation__modal--error">
+				<div class="addressValidation__modal--bg"></div>
+				<div class="addressValidation__modal--wrap">
+					<h4 class="addressValidation__modal--title">We couldn't find your address</h4>
+					<button class="addressValidation__modal--close js-addressValidation__modal--close">x</button>
+					<p class="addressValidation__modal--text">Please review it. Bear in mind that we will might be unabled to send your order.</p>
+					<button class="addressValidation__modal--button js-addressValidation__modal--close">Close</button>
+				</div>
+			</div>
+		`;
+
+		if($(".addressValidation__modal").length) return
+		$("body").append(_modalHTML);
+	}
+
 	showModal() {
 		const _this = this;
 
@@ -65,7 +84,7 @@ class _addressValidation {
 				<div class="addressValidation__modal--bg"></div>
 				<div class="addressValidation__modal--wrap">
 					<h4 class="addressValidation__modal--title">Address Verification</h4>
-					<button class="addressValidation__modal--close">x</button>
+					<button class="addressValidation__modal--close js-addressValidation__modal--close">x</button>
 					<p class="addressValidation__modal--text">Your address is might wrong.</p>
 					<form class="addressValidation__modal--addresses"> 
 						<label class="addressValidation__modal--addressOption">
@@ -74,16 +93,16 @@ class _addressValidation {
 							<span>
 								${_this.checkoutAddress.street} 
 								<br/>
-								${_this.checkoutAddress.city}, ${_this.checkoutAddress.state} ${_this.checkoutAddress.postalCode}
+								${_this.checkoutAddress.city ? `${_this.checkoutAddress.city}, ` : ""}${_this.checkoutAddress.state} ${_this.checkoutAddress.postalCode}
 							</span>
 						</label>
 						<label class="addressValidation__modal--addressOption addressValidation__modal--addressOption--validated ischecked">
 							<p>We suggest:</p>
 							<input type="radio" name="addressvalidation" checked="checked"/>
 							<span>
-								${_this.validatedAddress.components.primary_number} ${_this.validatedAddress.components.street_name} ${_this.validatedAddress.components.street_suffix}
+								${_this.validatedAddress.components.primary_number} ${_this.validatedAddress.components.street_name} ${_this.validatedAddress.components.street_suffix ? _this.validatedAddress.components.street_suffix : ""}
 								<br/>
-								${_this.validatedAddress.components.default_city_name}, ${_this.validatedAddress.components.state_abbreviation} ${_this.validatedAddress.components.zipcode}
+								${_this.validatedAddress.components.default_city_name == "Null" ? "" : _this.validatedAddress.components.default_city_name}, ${_this.validatedAddress.components.state_abbreviation} ${_this.validatedAddress.components.zipcode}
 							</span>
 						</label>
 					</form>
@@ -168,14 +187,17 @@ class _addressValidation {
 				_this.orderForm.shippingData.selectedAddresses.length &&
 				_this.orderForm.shippingData.selectedAddresses[0].isDisposable &&
 				!_this._addressValidationStatus &&
-				(_this._addressValidationId != _this.orderForm.shippingData.selectedAddresses[0].addressId)
+				(_this._addressValidationId != _this.orderForm.shippingData.selectedAddresses[0].addressId) &&
+				(_this.orderForm.shippingData.selectedAddresses[0].neighborhood || _this.orderForm.shippingData.selectedAddresses[0].city) &&
+				_this.orderForm.shippingData.selectedAddresses[0].postalCode &&
+				_this.orderForm.shippingData.selectedAddresses[0].state &&
+				_this.orderForm.shippingData.selectedAddresses[0].street
 				
 			) {
 				
 				_this.checkoutAddress = _this.orderForm.shippingData.selectedAddresses[0];
 
-				
-				fetch(`/smartystreets-validation/?street=${_this.checkoutAddress.street}&city=${_this.checkoutAddress.neighborhood}&state=${_this.checkoutAddress.state}&zipcode=${_this.checkoutAddress.postalCode}`, 
+				fetch(`/smartystreets-validation/?street=${_this.checkoutAddress.street}&city=${_this.checkoutAddress.neighborhood ? _this.checkoutAddress.neighborhood : _this.checkoutAddress.city}&state=${_this.checkoutAddress.state}&zipcode=${_this.checkoutAddress.postalCode}`, 
 				{
           method: 'GET',
           redirect: 'follow'
@@ -192,7 +214,12 @@ class _addressValidation {
             _this.validatedAddress.delivery_line_1 == _this.checkoutAddress.street
           ) return;
 
-          _this.showModal();
+					if(_this.validatedAddress.analysis.dpv_match_code) {
+						_this.showModal();
+					} else {
+						_this.showInvalidAddressModal();
+					}
+          
 
         })
 				.catch(error => console.log('error', error));
@@ -208,16 +235,20 @@ class _addressValidation {
 
 	compareSelectAddresses(oldOrderForm, orderFormUpdated) {
 		const _this = this;
-		if(oldOrderForm.shippingData.selectedAddresses[0] != orderFormUpdated.shippingData.selectedAddresses[0]) _this._addressValidationStatus = false;
+
+		if(JSON.stringify(orderFormUpdated.shippingData.selectedAddresses[0]) != JSON.stringify(oldOrderForm.shippingData.selectedAddresses[0])) { 
+			_this._addressValidationStatus = false; 
+		} else {
+			_this._addressValidationStatus = true; 
+		}
 	}
 
 	init() {
 		const _this = this;
 
-
 		$(window).on('orderFormUpdated.vtex', function(evt, orderForm) {
 
-      if(_this.orderForm) _this.compareSelectAddresses(_this.orderForm, orderForm);
+      if(_this.orderForm && _this.orderForm != orderForm) _this.compareSelectAddresses(_this.orderForm, orderForm);
 
 			_this.orderForm = orderForm;
 			_this.lang = vtex ? vtex.i18n.locale : "en";
@@ -226,7 +257,7 @@ class _addressValidation {
 			if(window.location.hash=="#/shipping" || window.location.hash=="#/payment") {
 				debounce(function() {
 					_this.validate(orderForm);
-				}, 250)();
+				}, 350)();
 			}
 		});
 
@@ -234,4 +265,4 @@ class _addressValidation {
 }
 
 window.addressValidation = new _addressValidation()
-addressValidation.init(); 
+$(window).load(() => {addressValidation.init()}); 

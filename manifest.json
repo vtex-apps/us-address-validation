@@ -11,7 +11,7 @@
     "messages": "0.x"
   },
   "scripts": {
-    "prereleasy": "bash lint.sh"
+    "postreleasy": "vtex publish --verbose"
   },
   "credentialType": "absolute",
   "settingsSchema": {

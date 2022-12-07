@@ -1,39 +1,14 @@
-.addressValidation__modal,
-.addressValidation__modal--bg {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 99999;
+.addressValidation__box {
+  position: relative;
+  clear: both;
+  padding: 5px 15px;
 }
 
-.addressValidation__modal--bg {
-  background: #000;
-  opacity: 0.4;
-}
-
-.addressValidation__modal--wrap {
-  width: 400px;
-  background: #fff;
-  position: fixed;
-  left: calc(50% - 200px);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 99999;
-  padding: 30px;
-  border-radius: 3px;
-  box-sizing: border-box;
-
+.addressValidation__box--wrap {
   color: #333333;
-  background: #fff;
-  box-shadow: 0 5px 0 #ddd;
-  border-bottom: 1px solid #fff;
-  border-radius: 4px;
-  border: 2px solid #eee;
 }
 
-button.addressValidation__modal--button {
+button.addressValidation__box--button {
   background: #1a73e8;
   padding: 10px;
   display: inline-block;
@@ -41,12 +16,12 @@ button.addressValidation__modal--button {
   border-radius: 3px;
   color: #fff;
 }
-.addressValidation__modal--button.js-loading {
+.addressValidation__box--button.js-loading {
 	opacity: 0.8;
 }
-.addressValidation__modal--button.js-loading:after {
-  border: 3px solid #f3f3f3; 
-  border-top: 3px solid #1a73e8; 
+.addressValidation__box--button.js-loading:after {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1a73e8;
   border-radius: 50%;
   width: 10px;
   height: 10px;
@@ -57,39 +32,70 @@ button.addressValidation__modal--button {
   vertical-align: middle;
 }
 
-h4.addressValidation__modal--title {
+h4.addressValidation__box--title {
   font-size: 16px;
   font-weight: bold;
   color: #000;
 }
 
-.addressValidation__modal--addresses {
-  display: flex;
+.addressValidation__box--addresses {
   width: 100%;
-  justify-content: space-between;
   margin: 10px 0px;
 }
 
-.addressValidation__modal--addressOption {
+
+
+.addressValidation__box--addressOption {
   display: block;
-  width: calc(50% - 10px);
-  padding: 20px;
+  transition: all ease 0.3s;
+  padding: 10px 10px 10px 35px;
+  margin: 15px 0;
+  background: #f9f9f9;
+  position:relative;
+  border:1px solid transparent;
   transition: all ease 0.3s;
 }
 
-.addressValidation__modal--addressOption p {
+.addressValidation__box--addressOption p {
   font-weight: bold;
 }
 
-.addressValidation__modal--addressOption.ischecked {
-  background: #eee;
+.addressValidation__box--addressOption > * {display:block;}
+
+.addressValidation__box--addressOption b {font-style: italic;}
+
+
+.addressValidation__box--addressOption:hover{
+  border-color:#333;
 }
 
-p.addressValidation__modal--text {
+.addressValidation__box--addressOption input {
+  position:absolute;
+  top:7px;
+  left:10px;
+  width:15px;
+  height:15px
+}
+
+p.addressValidation__box--text {
   margin-bottom: 0;
+  border: 1px solid #fadda9;
+  display: flex;
+  align-items: center;
+
 }
 
-button.addressValidation__modal--close {
+p.addressValidation__box--text .icon {
+  background:#fadda9;
+  padding: 16px;
+  margin-right: 15px;
+}
+
+p.addressValidation__box--text svg {
+  height: 26px;
+}
+
+button.addressValidation__box--close {
   position: absolute;
   top: -2px;
   right: -2px;
@@ -104,11 +110,11 @@ button.addressValidation__modal--close {
 }
 
 
-.addressValidation__modal.addressValidation__modal--error .addressValidation__modal--text {
+.addressValidation__box.addressValidation__box--error .addressValidation__box--text {
     margin-bottom:12px;
 }
 
-.addressValidation__modal.addressValidation__modal--error h4.addressValidation__modal--title:before {
+.addressValidation__box.addressValidation__box--error h4.addressValidation__box--title:before {
     content:"x";
     width:30px;
     height:30px;

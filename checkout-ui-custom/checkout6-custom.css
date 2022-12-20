@@ -1,7 +1,8 @@
 .addressValidation__box {
-  position: relative;
   clear: both;
-  padding: 5px 15px;
+  padding: 5px 30px 30px 30px;
+  background: #FFF;
+  margin-bottom: 30px;
 }
 
 .addressValidation__box--wrap {
@@ -127,6 +128,16 @@ button.addressValidation__box--close {
     border-radius:100%;
     font-weight: normal;
 }
+
+
+body.js-addressValidation-active {}
+  body.js-addressValidation-active.v-custom-fnsCustomAddressForm div#shipping-data {
+    margin-bottom: 0 !important;
+    padding-bottom: 0;
+  }
+  body.js-addressValidation-active .orderform-template-holder #shipping-data .accordion-inner {
+    display:none;
+  }
 
 @keyframes spin {
   0% {

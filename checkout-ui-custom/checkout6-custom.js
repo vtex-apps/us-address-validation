@@ -61,14 +61,16 @@ class _addressValidation {
 	showInvalidAddressModal() {
 		const _this = this
 
-		const _modalHTML = `
-			<div class="addressValidation__box addressValidation__box--error">
-				<div class="addressValidation__box--bg"></div>
+    const _modalHTML = `
+			<div class="addressValidation__box">
 				<div class="addressValidation__box--wrap">
-					<h4 class="addressValidation__box--title">We couldn't find your address</h4>
-					<button class="addressValidation__box--close js-addressValidation__box--close">x</button>
+					<h4 class="addressValidation__box--title">Address Verification</h4>
+					<p class="addressValidation__box--text">
+            <span class="icon">x</span>
+            <b>We couldn't find your address</b>
+          </p>
 					<p class="addressValidation__box--text">Please review it. Bear in mind that we will might be unabled to send your order.</p>
-					<button class="addressValidation__box--button js-addressValidation__box--close">Close</button>
+					<button class="addressValidation__box--button js-addressValidation__box--close">Continue with this address</button>
 				</div>
 			</div>
 		`
@@ -146,16 +148,16 @@ class _addressValidation {
              {
                 'addressType':'residential',
                 'receiverName':'',
-                'addressId':"",
+                'addressId':'',
                 'isDisposable':true,
                 'postalCode':_this.validatedAddress.components.zipcode,
-                'city':_this.validatedAddress.components.city_name,
+                'city':_this.validatedAddress.components.default_city_name,
                 'state':_this.validatedAddress.components.state_abbreviation,
-                'country':"USA",
-                'geoCoordinates':[_this.validatedAddress.metadata.latitude, _this.validatedAddress.metadata.longitude],
+                'country':_this.checkoutAddress.country,
+                'geoCoordinates':[ _this.validatedAddress.metadata.longitude, _this.validatedAddress.metadata.latitude ],
                 'street':_this.validatedAddress.delivery_line_1,
                 'number':_this.validatedAddress.components.primary_number||"",
-                'neighborhood':_this.validatedAddress.components.default_city_name,
+                'neighborhood':'',
                 'complement':_this.checkoutAddress.complement,
                 'reference':null,
                 'addressQuery':`${_this.validatedAddress.delivery_line_1} ${_this.validatedAddress.last_line}`
@@ -181,6 +183,14 @@ class _addressValidation {
       })
 	}
 
+  ifAllUnavailable(orderForm) {
+    if(orderForm.items.filter( item => item.availability == "cannotBeDelivered").length == orderForm.items.length) {
+      $(".orderform-template-holder .step.shipping-data .box-step").hide();
+    } else {
+      $(".orderform-template-holder .step.shipping-data .box-step").show();
+    }
+  }
+
 	validate(orderForm) {
 		const _this = this
 
@@ -192,10 +202,10 @@ class _addressValidation {
 				_this.orderForm &&
 				_this.orderForm.shippingData &&
 				_this.orderForm.shippingData.selectedAddresses.length &&
-				_this.orderForm.shippingData.selectedAddresses[0].isDisposable &&
 				!_this._addressValidationStatus &&
 				(_this._addressValidationId !== _this.orderForm.shippingData.selectedAddresses[0].addressId) &&
-				(_this.orderForm.shippingData.selectedAddresses[0].neighborhood || _this.orderForm.shippingData.selectedAddresses[0].city) &&
+        !(~_this.orderForm.shippingData.selectedAddresses[0].city.indexOf('*')) &&
+				(_this.orderForm.shippingData.selectedAddresses[0].city || _this.orderForm.shippingData.selectedAddresses[0].neighborhood) &&
 				_this.orderForm.shippingData.selectedAddresses[0].postalCode &&
 				_this.orderForm.shippingData.selectedAddresses[0].state &&
 				_this.orderForm.shippingData.selectedAddresses[0].street
@@ -204,9 +214,8 @@ class _addressValidation {
 
 				_this.checkoutAddress = _this.orderForm.shippingData.selectedAddresses[0]
 
-        console.log(_this.checkoutAddress)
 
-				fetch(`/smartystreets-validation/?street=${_this.checkoutAddress.street}&city=${_this.checkoutAddress.neighborhood ? _this.checkoutAddress.neighborhood : _this.checkoutAddress.city}&state=${_this.checkoutAddress.state}&zipcode=${_this.checkoutAddress.postalCode}`,
+				fetch(`/smartystreets-validation/?street=${_this.checkoutAddress.street}&city=${_this.checkoutAddress.city ? _this.checkoutAddress.city : _this.checkoutAddress.neighborhood}&state=${_this.checkoutAddress.state}&zipcode=${_this.checkoutAddress.postalCode}`,
 				{
           method: 'GET',
           redirect: 'follow'
@@ -223,13 +232,16 @@ class _addressValidation {
             _this.validatedAddress.delivery_line_1 === _this.checkoutAddress.street
           ) return
 
-					if(_this.validatedAddress.analysis.dpv_match_code) {
+
+					if(_this.validatedAddress.analysis.dpv_match_code || _this.validatedAddress.analysis.dpv_footnotes=="A1") {
 						_this.showModal()
+            _this.activeAddressValidation();
 					} else {
-						_this.showInvalidAddressModal()
+						//_this.showInvalidAddressModal()
 					}
 
-          _this.activeAddressValidation();
+
+          _this.ifAllUnavailable(_this.orderForm);
 
         })
 				.catch(function(e) {

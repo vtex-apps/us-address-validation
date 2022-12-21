@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- address validation without modal
+
 ## [1.0.0] - 2021-12-20
 
 ## [0.1.2] - 2021-12-17

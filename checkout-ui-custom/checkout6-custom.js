@@ -223,13 +223,16 @@ class _addressValidation {
 				.then(response => response.text())
 				.then(function(result) {
 
+
           _this.validatedAddress = JSON.parse(result)[0]
 
           if(
+            (typeof _this.validatedAddress == "undefined") || (
+            _this.validatedAddress.components &&
             _this.validatedAddress.components.default_city_name === _this.checkoutAddress.city &&
             _this.validatedAddress.components.zipcode === _this.checkoutAddress.postalCode &&
             _this.validatedAddress.components.state_abbreviation === _this.checkoutAddress.state &&
-            _this.validatedAddress.delivery_line_1 === _this.checkoutAddress.street
+            _this.validatedAddress.delivery_line_1 === _this.checkoutAddress.street)
           ) return
 
 

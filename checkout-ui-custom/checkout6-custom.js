@@ -272,6 +272,7 @@ class _addressValidation {
 	compareSelectAddresses(oldOrderForm, orderFormUpdated) {
 		const _this = this
 
+
 		if(JSON.stringify(orderFormUpdated.shippingData.selectedAddresses[0]) !== JSON.stringify(oldOrderForm.shippingData.selectedAddresses[0])) {
 			_this._addressValidationStatus = false
 		} else {
@@ -287,7 +288,7 @@ class _addressValidation {
 
 		$(window).on('orderFormUpdated.vtex load', function(evt, orderForm) {
 
-      if(_this.orderForm && _this.orderForm !== orderForm) _this.compareSelectAddresses(_this.orderForm, orderForm)
+      if(_this.orderForm && (_this.orderForm !== orderForm) && _this.orderForm.shippingData && _this.orderForm.shippingData.selectedAddresses ) _this.compareSelectAddresses(_this.orderForm, orderForm)
 
 			_this.orderForm = orderForm
 			_this.lang = vtex ? vtex.i18n.locale : "en"

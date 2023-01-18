@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- conditional of shipping data
+
+
 ## [2.0.1] - 2023-01-16
 
 ### Fixed

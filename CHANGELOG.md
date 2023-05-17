@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Change request foillowing change from checkout-ui-custom
+
 ## [2.0.2] - 2023-01-18
 
 ### Fixed

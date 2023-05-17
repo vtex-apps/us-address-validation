@@ -47,10 +47,10 @@ class _addressValidation {
 
 	closeModal() {
 		const _this = this
-		$(".addressValidation__box").slideUp(300, function() {
+		$(".addressValidation__box").slideUp(500, function() {
 			$(".addressValidation__box").remove()
 			_this._addressValidationStatus = true
-			_this._addressValidationId = _this.orderForm.shippingData.selectedAddresses[0].addressId
+			//_this._addressValidationId = _this.orderForm.shippingData.selectedAddresses[0].addressId
 		})
 
     _this.desactiveAddressValidation();
@@ -130,57 +130,79 @@ class _addressValidation {
 			return
 		}
 
-		fetch(`/api/checkout/pub/orderForm/${_this.orderForm.orderFormId}/attachments/shippingData`,
-      {
-        "credentials":"include",
-        "headers":{
-           "accept":"application/json, text/javascript, */* q=0.01",
-           "cache-control":"no-cache",
-           "content-type":"application/json charset=UTF-8",
-           "pragma":"no-cache",
-           "sec-fetch-mode":"cors",
-           "sec-fetch-site":"same-origin",
-           "x-requested-with":"XMLHttpRequest"
-        },
-        "referrerPolicy":"no-referrer-when-downgrade",
-        "body":JSON.stringify({
-          'selectedAddresses':[
-             {
-                'addressType':'residential',
-                'receiverName':'',
-                'addressId':'',
-                'isDisposable':true,
-                'postalCode':_this.validatedAddress.components.zipcode,
-                'city':_this.validatedAddress.components.default_city_name,
-                'state':_this.validatedAddress.components.state_abbreviation,
-                'country':_this.checkoutAddress.country,
-                'geoCoordinates':[ _this.validatedAddress.metadata.longitude, _this.validatedAddress.metadata.latitude ],
-                'street':_this.validatedAddress.delivery_line_1,
-                'number':_this.validatedAddress.components.primary_number||"",
-                'neighborhood':'',
-                'complement':_this.checkoutAddress.complement,
-                'reference':null,
-                'addressQuery':`${_this.validatedAddress.delivery_line_1} ${_this.validatedAddress.last_line}`
-             }
-          ],
-          'clearAddressIfPostalCodeNotFound':false,
-       }),
-        "method":"POST",
-        "mode":"cors"
-      })
-      .then(response => response.json())
-      .then(function(data) {
-          if(data.error) {
-            console.error(`Something went wrong: ${data.error.message}`)
-          } else {
-            vtexjs.checkout.getOrderForm()
-            .done(function(order) {
-							_this.closeModal()
-              _this.desactiveAddressValidation()
-            })
-          }
 
+
+
+		// fetch(`/api/checkout/pub/orderForm/${_this.orderForm.orderFormId}/attachments/shippingData`,
+    //   {
+    //     "credentials":"include",
+    //     "headers":{
+    //        "accept":"application/json, text/javascript, */* q=0.01",
+    //        "cache-control":"no-cache",
+    //        "content-type":"application/json charset=UTF-8",
+    //        "pragma":"no-cache",
+    //        "sec-fetch-mode":"cors",
+    //        "sec-fetch-site":"same-origin",
+    //        "x-requested-with":"XMLHttpRequest"
+    //     },
+    //     "referrerPolicy":"no-referrer-when-downgrade",
+    //     "body":JSON.stringify({
+    //       'selectedAddresses':[
+    //          {
+    //             'addressType':'residential',
+    //             'receiverName':'',
+    //             'addressId':'',
+    //             'isDisposable':true,
+    //             'postalCode':_this.validatedAddress.components.zipcode,
+    //             'city':_this.validatedAddress.components.default_city_name,
+    //             'state':_this.validatedAddress.components.state_abbreviation,
+    //             'country':_this.checkoutAddress.country,
+    //             'geoCoordinates':[ _this.validatedAddress.metadata.longitude, _this.validatedAddress.metadata.latitude ],
+    //             'street':_this.validatedAddress.delivery_line_1,
+    //             'number':_this.validatedAddress.components.primary_number||"",
+    //             'neighborhood':'',
+    //             'complement':_this.checkoutAddress.complement,
+    //             'reference':null,
+    //             'addressQuery':`${_this.validatedAddress.delivery_line_1} ${_this.validatedAddress.last_line}`
+    //          }
+    //       ],
+    //       'clearAddressIfPostalCodeNotFound':false,
+    //    }),
+    //     "method":"POST",
+    //     "mode":"cors"
+    //   })
+
+    var shippingInfo = {
+      "selectedAddresses": [{
+            "addressType": "residential",
+            "receiverName": "",
+            "isDisposable": true,
+            "postalCode": _this.validatedAddress.components.zipcode,
+            "city": _this.validatedAddress.components.default_city_name,
+            "state": this.validatedAddress.components.state_abbreviation,
+            "country": _this.checkoutAddress.country,
+            "street":_this.validatedAddress.delivery_line_1,
+            "number": _this.validatedAddress.components.primary_number||"",
+            "neighborhood": "",
+            "complement": _this.checkoutAddress.complement,
+            "reference": null,
+            "geoCoordinates": [ _this.validatedAddress.metadata.longitude, _this.validatedAddress.metadata.latitude ],
+            "addressQuery": `${_this.validatedAddress.delivery_line_1} ${_this.validatedAddress.last_line}`
+        }],
+      "clearAddressIfPostalCodeNotFound": false
+    }
+
+    vtexjs.checkout.sendAttachment("shippingData", {}).done(function(orderForm) {
+      $("button.vtex-front-messages-close-all.close").trigger("click");
+      $(".vtex-omnishipping-1-x-warning").hide();
+      _this.closeModal()
+      vtexjs.checkout.sendAttachment("shippingData", shippingInfo).done(function(orderForm) {
+        _this.desactiveAddressValidation()
       })
+      .fail(function(error) {
+        console.error(`Something went wrong: ${error}`)
+      })
+    })
 	}
 
   ifAllUnavailable(orderForm) {
@@ -203,7 +225,6 @@ class _addressValidation {
 				_this.orderForm.shippingData &&
 				_this.orderForm.shippingData.selectedAddresses.length &&
 				!_this._addressValidationStatus &&
-				(_this._addressValidationId !== _this.orderForm.shippingData.selectedAddresses[0].addressId) &&
         !(~_this.orderForm.shippingData.selectedAddresses[0].city.indexOf('*')) &&
 				(_this.orderForm.shippingData.selectedAddresses[0].city || _this.orderForm.shippingData.selectedAddresses[0].neighborhood) &&
 				_this.orderForm.shippingData.selectedAddresses[0].postalCode &&
@@ -271,7 +292,6 @@ class _addressValidation {
 
 	compareSelectAddresses(oldOrderForm, orderFormUpdated) {
 		const _this = this
-
 
 		if(JSON.stringify(orderFormUpdated.shippingData.selectedAddresses[0]) !== JSON.stringify(oldOrderForm.shippingData.selectedAddresses[0])) {
 			_this._addressValidationStatus = false

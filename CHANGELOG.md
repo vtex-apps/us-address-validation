@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- events triggers
+
+### Fixed
+
+- dot in string
+
 ## [2.0.3] - 2023-05-17
 
 ### Fixed

@@ -89,8 +89,8 @@ class _addressValidation {
 					<h4 class="addressValidation__box--title">Address Verification</h4>
 					<p class="addressValidation__box--text">
             <span class="icon"><svg viewBox="0 0 15 17"><g stroke="#231F20" fill="#231F20" stroke-width="1"><path d="M.5 16.5v-5a6.81 6.81 0 015-2c3 0 4 2 6 2a5.35 5.35 0 003-1v-9a5.35 5.35 0 01-3 1c-2 0-3-2-6-2a6.81 6.81 0 00-5 2v9" fill="#FEFEFE" stroke-linecap="round" stroke-linejoin="round"></path></g></svg></span>
-            <b>The address you entered may be undeliverable. Please make sure it is correct before proceeding</b>
-          .</p>
+            <b>The address you entered may be undeliverable. Please make sure it is correct before proceeding.</b>
+          </p>
 					<form class="addressValidation__box--addresses">
 						<label class="addressValidation__box--addressOption">
 							<p>You entered:</p>
@@ -192,12 +192,14 @@ class _addressValidation {
       "clearAddressIfPostalCodeNotFound": false
     }
 
+    _this.triggerEvent("saveAddress")
     vtexjs.checkout.sendAttachment("shippingData", {}).done(function(orderForm) {
       $("button.vtex-front-messages-close-all.close").trigger("click");
       $(".vtex-omnishipping-1-x-warning").hide();
       _this.closeModal()
       vtexjs.checkout.sendAttachment("shippingData", shippingInfo).done(function(orderForm) {
         _this.desactiveAddressValidation()
+        _this.triggerEvent("savedAddress")
       })
       .fail(function(error) {
         console.error(`Something went wrong: ${error}`)
@@ -211,6 +213,10 @@ class _addressValidation {
     } else {
       $(".orderform-template-holder .step.shipping-data .box-step").show();
     }
+  }
+
+  triggerEvent(evt) {
+    $(window).trigger(`addressValidation__${evt}`)
   }
 
 	validate(orderForm) {
@@ -235,7 +241,7 @@ class _addressValidation {
 
 				_this.checkoutAddress = _this.orderForm.shippingData.selectedAddresses[0]
 
-
+        _this.triggerEvent("validate")
 				fetch(`/smartystreets-validation/?street=${_this.checkoutAddress.street}&city=${_this.checkoutAddress.city ? _this.checkoutAddress.city : _this.checkoutAddress.neighborhood}&state=${_this.checkoutAddress.state}&zipcode=${_this.checkoutAddress.postalCode}`,
 				{
           method: 'GET',
@@ -244,7 +250,7 @@ class _addressValidation {
 				.then(response => response.text())
 				.then(function(result) {
 
-
+          _this.triggerEvent("validated")
           _this.validatedAddress = JSON.parse(result)[0]
 
           if(
@@ -260,6 +266,7 @@ class _addressValidation {
 					if(_this.validatedAddress.analysis.dpv_match_code || _this.validatedAddress.analysis.dpv_footnotes=="A1") {
 						_this.showModal()
             _this.activeAddressValidation();
+            _this.triggerEvent("showModal")
 					} else {
 						//_this.showInvalidAddressModal()
 					}

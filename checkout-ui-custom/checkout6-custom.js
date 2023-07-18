@@ -106,7 +106,7 @@ class _addressValidation {
 							<p>Suggested address:</p>
 							<input type="radio" name="addressvalidation" checked="checked"/>
 							<span>
-								${_this.validatedAddress.components.primary_number} ${_this.validatedAddress.components.street_name} ${_this.validatedAddress.components.street_suffix ? _this.validatedAddress.components.street_suffix : ""}
+								${_this.validatedAddress.components.primary_number} ${_this.validatedAddress.components.street_predirection !== undefined ? _this.validatedAddress.components.street_predirection : ''} ${_this.validatedAddress.components.street_name} ${_this.validatedAddress.components.street_suffix ? _this.validatedAddress.components.street_suffix : ""}
 								<br/>
 								${_this.validatedAddress.components.default_city_name === "Null" ? "" : _this.validatedAddress.components.default_city_name}, ${_this.validatedAddress.components.state_abbreviation} ${_this.validatedAddress.components.zipcode}
 							</span>
@@ -300,7 +300,7 @@ class _addressValidation {
 	compareSelectAddresses(oldOrderForm, orderFormUpdated) {
 		const _this = this
 
-		if(JSON.stringify(orderFormUpdated.shippingData.selectedAddresses[0]) !== JSON.stringify(oldOrderForm.shippingData.selectedAddresses[0])) {
+		if(JSON.stringify(orderFormUpdated?.shippingData?.selectedAddresses[0]) !== JSON.stringify(oldOrderForm?.shippingData?.selectedAddresses[0])) {
 			_this._addressValidationStatus = false
 		} else {
 			_this._addressValidationStatus = true

@@ -39,30 +39,36 @@ class _addressValidation {
 			e.preventDefault()
 			e.stopPropagation()
 			_this.saveAddress()
-
 		})
 
-
+		$("body").on("click", ".js-addressCheck__box--button", function(e) {
+			e.preventDefault()
+			e.stopPropagation()
+      _this.desactiveAddressValidation();
+      _this.closeModal(".addressInvalidation__box")
+		})
 	}
 
-	closeModal() {
+	closeModal(selectedElement) {
 		const _this = this
-		$(".addressValidation__box").slideUp(500, function() {
-			$(".addressValidation__box").remove()
+
+		$(selectedElement).slideUp(500, function() {
+			$(selectedElement).remove()
 			_this._addressValidationStatus = true
 			//_this._addressValidationId = _this.orderForm.shippingData.selectedAddresses[0].addressId
+      if(selectedElement == ".addressInvalidation__box") {
+        $('body').addClass('v-custom-addressForm-on v-custom-googleForm-on')
+      }
 		})
 
     _this.desactiveAddressValidation();
-
-
 	}
 
 	showInvalidAddressModal() {
 		const _this = this
 
     const _modalHTML = `
-			<div class="addressValidation__box">
+			<div class="addressInvalidation__box">
 				<div class="addressValidation__box--wrap">
 					<h4 class="addressValidation__box--title">Address Verification</h4>
 					<p class="addressValidation__box--text">
@@ -70,13 +76,13 @@ class _addressValidation {
             <b>We couldn't find your address</b>
           </p>
 					<p class="addressValidation__box--text">Please review it. Bear in mind that we will might be unabled to send your order.</p>
-					<button class="addressValidation__box--button js-addressValidation__box--close">Continue with this address</button>
+					<button class="js-addressCheck__box--button js-addressValidation__box--close">Change Address</button>
 				</div>
 			</div>
 		`
 
-		if($(".addressValidation__box").length) return
-		$("body").append(_modalHTML)
+		if($(".addressInvalidation__box").length) return
+		$("#shipping-data").after(_modalHTML)
 	}
 
 	showModal() {
@@ -125,7 +131,7 @@ class _addressValidation {
 		const _this = this
 
 		if(!$(".addressValidation__box--addressOption--validated").hasClass("ischecked")) {
-			_this.closeModal()
+			_this.closeModal('.addressValidation__box')
       _this.desactiveAddressValidation();
 			return
 		}
@@ -196,7 +202,7 @@ class _addressValidation {
     vtexjs.checkout.sendAttachment("shippingData", {}).done(function(orderForm) {
       $("button.vtex-front-messages-close-all.close").trigger("click");
       $(".vtex-omnishipping-1-x-warning").hide();
-      _this.closeModal()
+      _this.closeModal(".addressValidation__box")
       vtexjs.checkout.sendAttachment("shippingData", shippingInfo).done(function(orderForm) {
         _this.desactiveAddressValidation()
         _this.triggerEvent("savedAddress")
@@ -262,17 +268,15 @@ class _addressValidation {
             _this.validatedAddress.delivery_line_1 === _this.checkoutAddress.street)
           ) return
 
-          debugger
-          if(_this.validatedAddress.analysis.dpv_footnotes.includes('A1')) {
-            debugger
-						_this.showInvalidAddressModal()
-          }
-
 					if(_this.validatedAddress.analysis.dpv_match_code) {
 						_this.showModal()
             _this.activeAddressValidation();
             _this.triggerEvent("showModal")
-					}
+					} else if(_this.validatedAddress.analysis.dpv_footnotes.includes('A1')) {
+						_this.showInvalidAddressModal()
+            _this.activeAddressValidation();
+            _this.triggerEvent("showModal")
+          }
 
 
           _this.ifAllUnavailable(_this.orderForm);
@@ -291,12 +295,10 @@ class _addressValidation {
 	}
 
   activeAddressValidation() {
-
     $("body").addClass("js-addressValidation-active")
   }
 
   desactiveAddressValidation() {
-
     $("body").removeClass("js-addressValidation-active")
   }
 

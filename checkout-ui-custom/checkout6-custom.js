@@ -262,13 +262,16 @@ class _addressValidation {
             _this.validatedAddress.delivery_line_1 === _this.checkoutAddress.street)
           ) return
 
+          debugger
+          if(_this.validatedAddress.analysis.dpv_footnotes.includes('A1')) {
+            debugger
+						_this.showInvalidAddressModal()
+          }
 
-					if(_this.validatedAddress.analysis.dpv_match_code || _this.validatedAddress.analysis.dpv_footnotes=="A1") {
+					if(_this.validatedAddress.analysis.dpv_match_code) {
 						_this.showModal()
             _this.activeAddressValidation();
             _this.triggerEvent("showModal")
-					} else {
-						//_this.showInvalidAddressModal()
 					}
 
 

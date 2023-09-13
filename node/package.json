@@ -1,6 +1,6 @@
 {
   "name": "vtex.us-address-validation-checkout",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "dependencies": {
     "@vtex/api": "6.45.20",
     "atob": "^2.1.2",

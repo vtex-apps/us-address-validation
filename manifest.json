@@ -1,7 +1,7 @@
 {
   "name": "us-address-validation-checkout",
   "vendor": "vtex",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "title": "Validate US address in the checkout",
   "description": "Compares identified user with the email used to login",
   "builders": {

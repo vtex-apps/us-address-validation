@@ -88,7 +88,6 @@ class _addressValidation {
 	showModal() {
 		const _this = this
 
-
 		const _modalHTML = `
 			<div class="addressValidation__box">
 				<div class="addressValidation__box--wrap">
@@ -112,7 +111,7 @@ class _addressValidation {
 							<p>Suggested address:</p>
 							<input type="radio" name="addressvalidation" checked="checked"/>
 							<span>
-								${_this.validatedAddress.components.primary_number} ${_this.validatedAddress.components.street_predirection !== undefined ? _this.validatedAddress.components.street_predirection : ''} ${_this.validatedAddress.components.street_name} ${_this.validatedAddress.components.street_suffix ? _this.validatedAddress.components.street_suffix : ""}
+								${_this.validatedAddress.components.primary_number} ${_this.validatedAddress.components.street_predirection !== undefined ? _this.validatedAddress.components.street_predirection : ''} ${_this.validatedAddress.components.street_name} ${_this.validatedAddress.components.street_postdirection ? _this.validatedAddress.components.street_postdirection : ""}
 								<br/>
 								${_this.validatedAddress.components.default_city_name === "Null" ? "" : _this.validatedAddress.components.default_city_name}, ${_this.validatedAddress.components.state_abbreviation} ${_this.validatedAddress.components.zipcode}
 							</span>

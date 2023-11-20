@@ -247,6 +247,8 @@ class _addressValidation {
 				_this.checkoutAddress = _this.orderForm.shippingData.selectedAddresses[0]
 
         _this.triggerEvent("validate")
+      if(window.vtexjs.checkout.orderForm && window.vtexjs.checkout.orderForm.shippingData && window.vtexjs.checkout.orderForm.shippingData.logisticsInfo &&
+        window.vtexjs.checkout.orderForm.shippingData.logisticsInfo[0].selectedDeliveryChannel !== 'pickup-in-point') {
 				fetch(`/smartystreets-validation/?street=${_this.checkoutAddress.street}&city=${_this.checkoutAddress.city ? _this.checkoutAddress.city : _this.checkoutAddress.neighborhood}&state=${_this.checkoutAddress.state}&zipcode=${_this.checkoutAddress.postalCode}`,
 				{
           method: 'GET',
@@ -284,6 +286,7 @@ class _addressValidation {
 				.catch(function(e) {
           console.error(e);
         })
+      }
 
 
 			}
